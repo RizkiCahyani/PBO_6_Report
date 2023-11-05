@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2cdfffca-b297-41db-a9a7-3a177d825c59">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[select*from mata_kuliah]]>
+	</queryString>
+	<field name="kode_matkul" class="java.lang.String"/>
+	<field name="nama_matkul" class="java.lang.String"/>
+	<field name="sks" class="java.lang.String"/>
+	<field name="semester" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="79" forecolor="#000000" backcolor="#CC0000" uuid="a7316620-7029-4a36-b2cf-77817dad8ba2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA MATA KULIAH]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="9" width="100" height="20" uuid="f5ca9c69-efe2-4b86-9df7-81ff9c4b46c6"/>
+				<text><![CDATA[kode mata kuliah]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="166" y="9" width="100" height="20" uuid="272d1843-6736-4be1-908e-96c9299145e3"/>
+				<text><![CDATA[nama mata kuliah]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="9" width="100" height="20" uuid="28d444c8-0081-4119-b0bc-97cecc57201d"/>
+				<text><![CDATA[SKS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="9" width="100" height="20" uuid="5fe27e53-46c5-49a3-9917-a7e2fbdbffbd"/>
+				<text><![CDATA[Semester]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="4" width="100" height="20" uuid="90d20a38-a88b-4245-91b6-8d4ff3525f83"/>
+				<textFieldExpression><![CDATA[$F{kode_matkul}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="166" y="4" width="100" height="20" uuid="036d7f07-6efc-44fe-ab0c-770d7ae5f38b"/>
+				<textFieldExpression><![CDATA[$F{nama_matkul}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="312" y="4" width="100" height="20" uuid="4b123170-b7f3-447c-84ba-1d050cb28a8f"/>
+				<textFieldExpression><![CDATA[$F{sks}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="4" width="100" height="20" uuid="7842fc97-a886-4d3f-92a9-b2cea541c74c"/>
+				<textFieldExpression><![CDATA[$F{semester}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

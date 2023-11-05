@@ -1,0 +1,507 @@
+package latiandb;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.awt.print.PrinterException;
+import javax.swing.JTable;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+import javax.swing.table.TablePrintable;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
+
+public class GUIMatkul extends javax.swing.JFrame {
+
+    public void peringatan(String pesan) {
+        JOptionPane.showMessageDialog(rootPane, pesan);
+    }
+    ArrayList<MataKuliah> dataMataKuliah;
+
+    
+
+    private int masukkanData(Connection conn, String KodeMatkul, String NamaMatkul, String sks, String Semester) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement("INSERT INTO mata_kuliah (kode_matkul, nama_matkul, sks, semester) VALUES(?,?,?,?)");
+        pst.setString(1, KodeMatkul);
+        pst.setString(2, NamaMatkul);
+        pst.setString(3, sks);
+        pst.setString(4, Semester);
+        return pst.executeUpdate();
+    }
+
+    private int updateData(Connection conn, String KodeMatkul, String NamaMatkul, String sks, String Semester) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement("UPDATE mata_kuliah SET kode_matkul = ?, nama_matkul = ?, sks = ?, semester = ? WHERE kode_matkul = ?");
+        pst.setString(1, KodeMatkul);
+        pst.setString(2, NamaMatkul);
+        pst.setString(3, sks);
+        pst.setString(4, Semester);
+        pst.setString(5, KodeMatkul);
+        return pst.executeUpdate();
+    }
+
+    private int hapusData(Connection conn, String KodeMatkul) throws SQLException {
+        String query = "DELETE FROM mata_kuliah WHERE kode_matkul = ?";
+
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, KodeMatkul);
+
+        return preparedStatement.executeUpdate();
+    }
+
+    private void cetakDataTabel(JTable tabel) {
+        try {
+            // Membuat instance dari TableModel
+            TableModel model = tabel.getModel();
+
+            // Mencetak data tabel
+            boolean berhasil = tabel.print(JTable.PrintMode.FIT_WIDTH,
+                    null, null, true, null, true, null);
+
+            if (berhasil) {
+                JOptionPane.showMessageDialog(this, "Data telah dicetak.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Gagal mencetak data.");
+            }
+        } catch (PrinterException e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan mencetak: " + e.getMessage());
+        }
+    }
+
+    private void tampil(Connection conn) {
+        dataMataKuliah.clear();
+        try {
+            String sql = "select * from mata_kuliah";
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                MataKuliah data = new MataKuliah();
+                data.setKodeMatkul(String.valueOf(rs.getObject(1)));
+                data.setNamaMatkul(String.valueOf(rs.getObject(2)));
+                data.setSks(String.valueOf(rs.getObject(3)));
+                data.setSemester(String.valueOf(rs.getObject(4)));
+
+                dataMataKuliah.add(data);
+            }
+            DefaultTableModel model = (DefaultTableModel) TabelKu.getModel();
+            model.setRowCount(0);
+            for (MataKuliah data : dataMataKuliah) {
+
+                Object[] baris = new Object[4];
+                baris[0] = data.getKodeMatkul();
+                baris[1] = data.getNamaMatkul();
+                baris[2] = data.getSks();
+                baris[3] = data.getSemester();
+
+                model.addRow(baris);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public GUIMatkul() {
+        try {
+            dataMataKuliah = new ArrayList<>();
+            initComponents();
+            Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Db_Mahasiswa", "postgres", "12345");
+            tampil(conn);
+        } catch (SQLException ex) {
+            Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        KodeMK = new javax.swing.JTextField();
+        NamaMK = new javax.swing.JTextField();
+        sks1 = new javax.swing.JTextField();
+        semester1 = new javax.swing.JTextField();
+        Simpan = new javax.swing.JButton();
+        Delete = new javax.swing.JButton();
+        Update = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        TabelKu = new javax.swing.JTable();
+        jButtonCetak = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel1.setText("Kode MatKul");
+
+        jLabel2.setText("Nama Matkul");
+
+        jLabel3.setText("SKS");
+
+        jLabel4.setText("Semester");
+
+        KodeMK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                KodeMKActionPerformed(evt);
+            }
+        });
+
+        NamaMK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NamaMKActionPerformed(evt);
+            }
+        });
+
+        sks1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sks1ActionPerformed(evt);
+            }
+        });
+
+        Simpan.setText("Simpan");
+        Simpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SimpanActionPerformed(evt);
+            }
+        });
+
+        Delete.setText("Delete");
+        Delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteActionPerformed(evt);
+            }
+        });
+
+        Update.setText("Update");
+        Update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateActionPerformed(evt);
+            }
+        });
+
+        TabelKu.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Kode Matkul", "Nama Matkul", "SKS", "Semester"
+            }
+        ));
+        TabelKu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TabelKuMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(TabelKu);
+
+        jButtonCetak.setText("Cetak");
+        jButtonCetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCetakActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(Simpan)
+                                    .addGap(60, 60, 60)
+                                    .addComponent(Update)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                                    .addComponent(Delete))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel3)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel1))
+                                    .addGap(31, 31, 31)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(KodeMK, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                                        .addComponent(NamaMK)
+                                        .addComponent(sks1)
+                                        .addComponent(semester1)))))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(398, 398, 398)
+                            .addComponent(jButtonCetak, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(KodeMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(NamaMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(sks1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(semester1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Simpan)
+                    .addComponent(Update)
+                    .addComponent(Delete))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonCetak)
+                .addContainerGap(26, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void KodeMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KodeMKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_KodeMKActionPerformed
+
+    private void SimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SimpanActionPerformed
+        String KodeMatkul = KodeMK.getText().trim();
+        String NamaMatkul = NamaMK.getText();
+        String sks = sks1.getText();
+        String Semester = semester1.getText();
+
+        if (!KodeMatkul.isEmpty() && !NamaMatkul.isEmpty() && !sks.isEmpty() && !Semester.isEmpty()) {
+
+            try {
+                // TODO add your handling code here:
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Db_Mahasiswa", "postgres", "12345");
+                int k = masukkanData(conn, KodeMatkul, NamaMatkul, sks, Semester);
+                if (k > 0) {
+                    tampil(conn);
+                    this.peringatan("Simpan Berhasil");
+                } else {
+                    this.peringatan("Simpan Gagal");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            this.peringatan("Input Data MataKuliah Gagal");
+        }
+        KodeMK.setText("");
+        NamaMK.setText("");
+        sks1.setText("");
+        semester1.setText("");
+    }//GEN-LAST:event_SimpanActionPerformed
+
+    private void UpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateActionPerformed
+
+        String KodeMatkul = KodeMK.getText().trim();
+        String NamaMatkul = NamaMK.getText();
+        String sks = sks1.getText();
+        String Semester = semester1.getText();
+
+        if (!KodeMatkul.isEmpty() && !NamaMatkul.isEmpty() && !sks.isEmpty() && !Semester.isEmpty()) {
+
+            try {
+                // TODO add your handling code here:
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Db_Mahasiswa", "postgres", "12345");
+
+                // Lakukan pembaruan data
+                int k = updateData(conn, KodeMatkul, NamaMatkul, sks, Semester);
+
+                if (k > 0) {
+                    tampil(conn);
+                    this.peringatan("Update Berhasil");
+                } else {
+                    this.peringatan("Update Gagal");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            this.peringatan("Input Data Mata Kuliah Gagal");
+        }
+        KodeMK.setText("");
+        NamaMK.setText("");
+        sks1.setText("");
+        semester1.setText("");
+
+    }//GEN-LAST:event_UpdateActionPerformed
+
+    private void sks1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sks1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sks1ActionPerformed
+
+    private void DeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteActionPerformed
+
+        String KodeMatkul = KodeMK.getText().trim();
+
+        if (!KodeMatkul.isEmpty()) {
+            try {
+                Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Db_Mahasiswa", "postgres", "12345");
+
+                // Lakukan penghapusan data
+                int k = hapusData(conn, KodeMatkul);
+
+                if (k > 0) {
+                    tampil(conn);
+                    this.peringatan("Hapus Berhasil");
+                } else {
+                    this.peringatan("Hapus Gagal");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            this.peringatan("Input Kode Mata Kuliah yang akan dihapus");
+        }
+        KodeMK.setText("");
+
+    }//GEN-LAST:event_DeleteActionPerformed
+
+    private void TabelKuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TabelKuMouseClicked
+
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Db_Mahasiswa", "postgres", "12345");
+            int row = TabelKu.getSelectedRow();
+            String tabel_klik = (TabelKu.getModel().getValueAt(row, 0).toString());
+            java.sql.Statement stm = conn.createStatement();
+            java.sql.ResultSet sql = stm.executeQuery("select * from mata_kuliah where kode_matkul='" + tabel_klik + "'");
+            if (sql.next()) {
+                String kodeMatkul = sql.getString("kode_matkul");
+                KodeMK.setText(kodeMatkul);
+                String namaMatkul = sql.getString("nama_matkul");
+                NamaMK.setText(namaMatkul);
+                String sks = sql.getString("sks");
+                sks1.setText(sks);
+                String semester = sql.getString("semester");
+                semester1.setText(semester);
+            }
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_TabelKuMouseClicked
+
+    private void jButtonCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCetakActionPerformed
+        // TODO add your handling code here:
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Db_Mahasiswa", "postgres", "12345");
+        //} catch (SQLException ex) {
+           // Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+
+            String jrxmlFile = new String("src/latiandb/MataKuliah.jrxml");
+
+            JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+            JasperPrint jp = JasperFillManager.fillReport(jr, null, conn);
+            JasperViewer.viewReport(jp, false);
+        
+    }   catch (SQLException ex) {
+            Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JRException ex) {
+            Logger.getLogger(GUIMatkul.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonCetakActionPerformed
+
+    private void NamaMKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NamaMKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NamaMKActionPerformed
+
+public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+
+                
+
+}
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(GUIMatkul.class
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+        
+
+} catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(GUIMatkul.class
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+        
+
+} catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(GUIMatkul.class
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+        
+
+} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(GUIMatkul.class
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new GUIMatkul().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Delete;
+    private javax.swing.JTextField KodeMK;
+    private javax.swing.JTextField NamaMK;
+    private javax.swing.JButton Simpan;
+    private javax.swing.JTable TabelKu;
+    private javax.swing.JButton Update;
+    private javax.swing.JButton jButtonCetak;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField semester1;
+    private javax.swing.JTextField sks1;
+    // End of variables declaration//GEN-END:variables
+
+}
